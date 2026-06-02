@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dorm Helper</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<nav>
+    <h2>Dorm Helper</h2>
+
+    <ul>
+        <li onclick="showSection('home')">Home</li>
+        <li onclick="showSection('marketplace')">Marketplace</li>
+        <li onclick="showSection('laundry')">Laundry</li>
+        <li onclick="showSection('lostfound')">Lost & Found</li>
+        <li onclick="showSection('about')">About</li>
+    </ul>
+
+    <select id="themeSelector">
+        <option value="white">White</option>
+        <option value="blue">Blue</option>
+        <option value="pink">Pink</option>
+    </select>
+</nav>
+
+<section id="home" class="page active">
+    <h1>Welcome to Dorm Helper</h1>
+
+    <p>
+        An AI-inspired platform that helps students
+        manage dorm life efficiently.
+    </p>
+
+    <div class="cards">
+        <div class="card">
+            <h3>Marketplace</h3>
+            <p>Buy and sell used items.</p>
+        </div>
+
+        <div class="card">
+            <h3>Laundry Reminder</h3>
+            <p>Never forget your laundry.</p>
+        </div>
+
+        <div class="card">
+            <h3>Lost & Found</h3>
+            <p>Reconnect owners with belongings.</p>
+        </div>
+    </div>
+</section>
+
+<section id="marketplace" class="page">
+
+<h2>Marketplace</h2>
+
+<input id="itemName" placeholder="Item Name">
+<input id="itemPrice" placeholder="Price">
+
+<textarea id="itemDesc"
+placeholder="Description"></textarea>
+
+<button onclick="generateDescription()">
+Generate AI Description
+</button>
+
+<button onclick="addItem()">
+Add Item
+</button>
+
+<ul id="itemList"></ul>
+
+</section>
+
+<section id="laundry" class="page">
+
+<h2>Laundry Reminder</h2>
+
+<input id="machineNumber"
+placeholder="Machine Number">
+
+<input id="laundryTime"
+placeholder="Time Remaining">
+
+<button onclick="addLaundry()">
+Save Reminder
+</button>
+
+<ul id="laundryList"></ul>
+
+</section>
+
+<section id="lostfound" class="page">
+
+<h2>Lost & Found</h2>
+
+<input id="lostItem"
+placeholder="Item Name">
+
+<input id="lostLocation"
+placeholder="Location Found">
+
+<button onclick="addLostItem()">
+Add Post
+</button>
+
+<ul id="lostList"></ul>
+
+</section>
+
+<section id="about" class="page">
+
+<h2>About Dorm Helper</h2>
+
+<p>
+Dorm Helper is a web application designed
+to improve communication and convenience
+for students living in dormitories.
+</p>
+
+</section>
+
+<script src="script.js"></script>
+
+</body>
+</html>

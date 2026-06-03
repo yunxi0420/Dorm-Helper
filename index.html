@@ -57,21 +57,37 @@
 
 <h2>Marketplace</h2>
 
-<input id="itemName" placeholder="Item Name">
-<input id="itemPrice" placeholder="Price">
+<div class="marketplace-form">
+    <input id="itemName" placeholder="Item Name">
+    <input id="itemPrice" placeholder="Price">
+    
+    <div class="condition-selector">
+        <label>Condition:</label>
+        <select id="itemCondition">
+            <option value="new">New</option>
+            <option value="used">Used</option>
+        </select>
+    </div>
 
-<textarea id="itemDesc"
-placeholder="Description"></textarea>
+    <textarea id="itemDesc"
+    placeholder="Description"></textarea>
 
-<button onclick="generateDescription()">
-Generate AI Description
-</button>
+    <div class="image-upload">
+        <label for="itemImage">Upload Picture:</label>
+        <input type="file" id="itemImage" accept="image/*">
+        <div id="imagePreview" class="image-preview"></div>
+    </div>
 
-<button onclick="addItem()">
-Add Item
-</button>
+    <button onclick="generateDescription()">
+    Generate AI Description
+    </button>
 
-<ul id="itemList"></ul>
+    <button onclick="addItem()">
+    Add Item
+    </button>
+</div>
+
+<div id="itemList" class="marketplace-items"></div>
 
 </section>
 

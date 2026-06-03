@@ -10,7 +10,7 @@
 <body>
 
 <nav>
-    <h2>Dorm Helper</h2>
+    <h2>🏠 Dorm Helper</h2>
 
     <ul>
         <li onclick="showSection('home')">Home</li>
@@ -24,67 +24,84 @@
         <option value="white">White</option>
         <option value="blue">Blue</option>
         <option value="pink">Pink</option>
+        <option value="purple">Purple</option>
     </select>
 </nav>
 
 <section id="home" class="page active">
-    <h1>Welcome to Dorm Helper</h1>
-
-    <p>
-        An AI-inspired platform that helps students
-        manage dorm life efficiently.
-    </p>
+    <div class="hero-section">
+        <h1>Welcome to Dorm Helper</h1>
+        <p class="subtitle">An AI-inspired platform that helps students manage dorm life efficiently.</p>
+        
+        <!-- Image Slider -->
+        <div class="slider-container">
+            <div class="slider">
+                <img class="slide fade" src="https://images.unsplash.com/photo-1489749798305-4fea3ba63d60?w=800&h=400&fit=crop" alt="Student Life">
+                <img class="slide fade" src="https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=800&h=400&fit=crop" alt="Shopping">
+                <img class="slide fade" src="https://images.unsplash.com/photo-1517457373614-b7152f800fd1?w=800&h=400&fit=crop" alt="Laundry">
+                <img class="slide fade" src="https://images.unsplash.com/photo-1534531173927-aeb928776fe5?w=800&h=400&fit=crop" alt="Community">
+            </div>
+            <a class="prev" onclick="changeSlide(-1)">&#10094;</a>
+            <a class="next" onclick="changeSlide(1)">&#10095;</a>
+            <div class="dots">
+                <span class="dot" onclick="currentSlide(0)"></span>
+                <span class="dot" onclick="currentSlide(1)"></span>
+                <span class="dot" onclick="currentSlide(2)"></span>
+                <span class="dot" onclick="currentSlide(3)"></span>
+            </div>
+        </div>
+    </div>
 
     <div class="cards">
-        <div class="card">
+        <div class="card card-marketplace" onclick="showSection('marketplace')">
+            <div class="card-icon">🛍️</div>
             <h3>Marketplace</h3>
-            <p>Buy and sell used items.</p>
+            <p>Buy and sell used items with ease.</p>
+            <div class="card-arrow">→</div>
         </div>
 
-        <div class="card">
+        <div class="card card-laundry" onclick="showSection('laundry')">
+            <div class="card-icon">🧺</div>
             <h3>Laundry Reminder</h3>
-            <p>Never forget your laundry.</p>
+            <p>Never forget your laundry again.</p>
+            <div class="card-arrow">→</div>
         </div>
 
-        <div class="card">
+        <div class="card card-lostfound" onclick="showSection('lostfound')">
+            <div class="card-icon">🔍</div>
             <h3>Lost & Found</h3>
-            <p>Reconnect owners with belongings.</p>
+            <p>Reconnect with your belongings.</p>
+            <div class="card-arrow">→</div>
         </div>
     </div>
 </section>
 
 <section id="marketplace" class="page">
 
-<h2>Marketplace</h2>
+<h2>🛍️ Marketplace</h2>
 
 <div class="marketplace-form">
-    <input id="itemName" placeholder="Item Name">
-    <input id="itemPrice" placeholder="Price">
+    <input id="itemName" placeholder="Item Name" required>
+    <input id="itemPrice" placeholder="Price" required>
     
     <div class="condition-selector">
         <label>Condition:</label>
         <select id="itemCondition">
-            <option value="new">New</option>
-            <option value="used">Used</option>
+            <option value="new">✨ New</option>
+            <option value="used">👍 Used</option>
         </select>
     </div>
 
-    <textarea id="itemDesc"
-    placeholder="Description"></textarea>
+    <textarea id="itemDesc" placeholder="Description"></textarea>
 
     <div class="image-upload">
-        <label for="itemImage">Upload Picture:</label>
+        <label for="itemImage">📸 Upload Picture:</label>
         <input type="file" id="itemImage" accept="image/*">
         <div id="imagePreview" class="image-preview"></div>
     </div>
 
-    <button onclick="generateDescription()">
-    Generate AI Description
-    </button>
-
-    <button onclick="addItem()">
-    Add Item
-    </button>
+    <button onclick="generateDescription()">✨ Generate AI Description</button>
+    <button onclick="addItem()" class="btn-primary">➕ Add Item</button>
 </div>
 
 <div id="itemList" class="marketplace-items"></div>
@@ -93,65 +110,70 @@
 
 <section id="laundry" class="page">
 
-<h2>Laundry Reminder</h2>
+<h2>🧺 Laundry Reminder</h2>
 
 <div class="laundry-form">
-    <input id="machineNumber"
-    placeholder="Machine Number">
-
-    <input id="laundryTime"
-    placeholder="Time Remaining">
+    <input id="machineNumber" placeholder="Machine Number" required>
+    <input id="laundryTime" placeholder="Time Remaining (e.g., 30 min)" required>
 
     <div class="image-upload">
-        <label for="laundryImage">Upload Picture:</label>
+        <label for="laundryImage">📸 Upload Picture:</label>
         <input type="file" id="laundryImage" accept="image/*">
         <div id="laundryImagePreview" class="image-preview"></div>
     </div>
 
-    <button onclick="addLaundry()">
-    Save Reminder
-    </button>
+    <button onclick="addLaundry()" class="btn-primary">💾 Save Reminder</button>
 </div>
 
-<ul id="laundryList"></ul>
+<ul id="laundryList" class="item-list"></ul>
 
 </section>
 
 <section id="lostfound" class="page">
 
-<h2>Lost & Found</h2>
+<h2>🔍 Lost & Found</h2>
 
 <div class="lostfound-form">
-    <input id="lostItem"
-    placeholder="Item Name">
-
-    <input id="lostLocation"
-    placeholder="Location Found">
+    <input id="lostItem" placeholder="Item Name" required>
+    <input id="lostLocation" placeholder="Location Found" required>
 
     <div class="image-upload">
-        <label for="lostImage">Upload Picture:</label>
+        <label for="lostImage">📸 Upload Picture:</label>
         <input type="file" id="lostImage" accept="image/*">
         <div id="lostImagePreview" class="image-preview"></div>
     </div>
 
-    <button onclick="addLostItem()">
-    Add Post
-    </button>
+    <button onclick="addLostItem()" class="btn-primary">📝 Add Post</button>
 </div>
 
-<ul id="lostList"></ul>
+<ul id="lostList" class="item-list"></ul>
 
 </section>
 
 <section id="about" class="page">
 
-<h2>About Dorm Helper</h2>
+<h2>ℹ️ About Dorm Helper</h2>
 
-<p>
-Dorm Helper is a web application designed
-to improve communication and convenience
-for students living in dormitories.
-</p>
+<div class="about-content">
+    <p>
+        Dorm Helper is a modern web application designed to improve communication and convenience
+        for students living in dormitories. Our platform provides essential tools to manage your dorm life.
+    </p>
+    <div class="features">
+        <div class="feature">
+            <h4>🚀 Fast & Easy</h4>
+            <p>Simple interface for quick access</p>
+        </div>
+        <div class="feature">
+            <h4>📱 Mobile Friendly</h4>
+            <p>Works on all your devices</p>
+        </div>
+        <div class="feature">
+            <h4>💾 Local Storage</h4>
+            <p>Your data stays private</p>
+        </div>
+    </div>
+</div>
 
 </section>
 

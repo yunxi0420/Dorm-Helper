@@ -1,32 +1,58 @@
-function showSection(id){
+let slideIndex = 0;
 
-document
-.querySelectorAll(".page")
-.forEach(page=>{
-page.classList.remove("active");
-});
-
-document
-.getElementById(id)
-.classList.add("active");
-
+function showSlide() {
+  const slides = document.querySelectorAll(".slide");
+  const dots = document.querySelectorAll(".dot");
+  
+  if (slideIndex >= slides.length) {
+    slideIndex = 0;
+  }
+  if (slideIndex < 0) {
+    slideIndex = slides.length - 1;
+  }
+  
+  slides.forEach(slide => slide.classList.remove("active"));
+  dots.forEach(dot => dot.classList.remove("active"));
+  
+  slides[slideIndex].classList.add("active");
+  dots[slideIndex].classList.add("active");
 }
 
-const themeSelector =
-document.getElementById("themeSelector");
+function changeSlide(n) {
+  slideIndex += n;
+  showSlide();
+}
+
+function currentSlide(n) {
+  slideIndex = n;
+  showSlide();
+}
+
+// Auto-rotate slides every 5 seconds
+setInterval(() => {
+  slideIndex++;
+  showSlide();
+}, 5000);
+
+function showSection(id){
+  document.querySelectorAll(".page").forEach(page=>{
+    page.classList.remove("active");
+  });
+  
+  document.getElementById(id).classList.add("active");
+  
+  // Reset slider when home page is shown
+  if(id === 'home') {
+    slideIndex = 0;
+    showSlide();
+  }
+}
+
+const themeSelector = document.getElementById("themeSelector");
 
 themeSelector.addEventListener("change",()=>{
-
-document.body.classList.remove(
-"pink",
-"blue",
-"white"
-);
-
-document.body.classList.add(
-themeSelector.value
-);
-
+  document.body.classList.remove("pink","blue","white","purple");
+  document.body.classList.add(themeSelector.value);
 });
 
 // Image upload preview for Marketplace
@@ -78,116 +104,84 @@ lostImageInput.addEventListener("change", (e) => {
 });
 
 function generateDescription(){
-
-const desc =
-document.getElementById("itemDesc");
-
-desc.value =
-"This item is in good condition and suitable for student dormitory use.";
-
+  const desc = document.getElementById("itemDesc");
+  desc.value = "This item is in good condition and suitable for student dormitory use.";
 }
 
 function addItem(){
+  const name = document.getElementById("itemName").value;
+  const price = document.getElementById("itemPrice").value;
+  const condition = document.getElementById("itemCondition").value;
+  const description = document.getElementById("itemDesc").value;
+  const imageData = imagePreview.querySelector("img") ? 
+                     imagePreview.querySelector("img").src : null;
 
-const name =
-document.getElementById("itemName").value;
+  if(!name || !price) {
+    alert("Please fill in item name and price");
+    return;
+  }
 
-const price =
-document.getElementById("itemPrice").value;
+  const items = JSON.parse(localStorage.getItem("items")) || [];
 
-const condition =
-document.getElementById("itemCondition").value;
+  items.push({
+    name,
+    price,
+    condition,
+    description,
+    image: imageData,
+    dateAdded: new Date().toLocaleDateString()
+  });
 
-const description =
-document.getElementById("itemDesc").value;
+  localStorage.setItem("items", JSON.stringify(items));
 
-const imageData =
-imagePreview.querySelector("img") ? 
-imagePreview.querySelector("img").src : null;
+  // Clear form
+  document.getElementById("itemName").value = "";
+  document.getElementById("itemPrice").value = "";
+  document.getElementById("itemCondition").value = "new";
+  document.getElementById("itemDesc").value = "";
+  document.getElementById("itemImage").value = "";
+  imagePreview.innerHTML = "";
+  imagePreview.style.display = "none";
 
-if(!name || !price) {
-  alert("Please fill in item name and price");
-  return;
-}
-
-const items =
-JSON.parse(localStorage.getItem("items"))
-|| [];
-
-items.push({
-  name,
-  price,
-  condition,
-  description,
-  image: imageData,
-  dateAdded: new Date().toLocaleDateString()
-});
-
-localStorage.setItem(
-"items",
-JSON.stringify(items)
-);
-
-// Clear form
-document.getElementById("itemName").value = "";
-document.getElementById("itemPrice").value = "";
-document.getElementById("itemCondition").value = "new";
-document.getElementById("itemDesc").value = "";
-document.getElementById("itemImage").value = "";
-imagePreview.innerHTML = "";
-imagePreview.style.display = "none";
-
-loadItems();
-
+  loadItems();
 }
 
 function loadItems(){
+  const list = document.getElementById("itemList");
+  list.innerHTML = "";
 
-const list =
-document.getElementById("itemList");
+  const items = JSON.parse(localStorage.getItem("items")) || [];
 
-list.innerHTML = "";
+  if(items.length === 0) {
+    list.innerHTML = "<div style='grid-column: 1/-1; text-align: center; padding: 40px; color: #999;'><p>No items listed yet. Be the first to add! 🚀</p></div>";
+    return;
+  }
 
-const items =
-JSON.parse(localStorage.getItem("items"))
-|| [];
+  items.forEach((item, index) => {
+    const itemDiv = document.createElement("div");
+    itemDiv.className = "marketplace-item";
 
-if(items.length === 0) {
-  list.innerHTML = "<p>No items listed yet. Be the first to add!</p>";
-  return;
-}
+    const conditionBadge = `<span class="condition-badge ${item.condition}">${item.condition.toUpperCase()}</span>`;
+    const imageHtml = item.image ? 
+                      `<img src="${item.image}" alt="${item.name}" class="item-image">` : 
+                      "<div class='no-image'>📸 No Image</div>";
 
-items.forEach((item, index) => {
+    itemDiv.innerHTML = `
+      <div class="item-content">
+        ${imageHtml}
+        <div class="item-details">
+          <h3>${item.name}</h3>
+          ${conditionBadge}
+          <p class="price">RM ${item.price}</p>
+          <p class="description">${item.description || "No description"}</p>
+          <p class="date-added">📅 Added: ${item.dateAdded}</p>
+          <button onclick="deleteItem(${index})" class="delete-btn">🗑️ Delete</button>
+        </div>
+      </div>
+    `;
 
-const itemDiv =
-document.createElement("div");
-
-itemDiv.className = "marketplace-item";
-
-const conditionBadge = `<span class="condition-badge ${item.condition}">${item.condition.toUpperCase()}</span>`;
-
-const imageHtml = item.image ? 
-`<img src="${item.image}" alt="${item.name}" class="item-image">` : 
-"<div class='no-image'>No Image</div>";
-
-itemDiv.innerHTML = `
-  <div class="item-content">
-    ${imageHtml}
-    <div class="item-details">
-      <h3>${item.name}</h3>
-      ${conditionBadge}
-      <p class="price">RM ${item.price}</p>
-      <p class="description">${item.description || "No description"}</p>
-      <p class="date-added">Added: ${item.dateAdded}</p>
-      <button onclick="deleteItem(${index})" class="delete-btn">Delete</button>
-    </div>
-  </div>
-`;
-
-list.appendChild(itemDiv);
-
-});
-
+    list.appendChild(itemDiv);
+  });
 }
 
 function deleteItem(index) {
@@ -198,91 +192,69 @@ function deleteItem(index) {
 }
 
 function addLaundry(){
+  const machine = document.getElementById("machineNumber").value;
+  const time = document.getElementById("laundryTime").value;
+  const imageData = laundryImagePreview.querySelector("img") ? 
+                     laundryImagePreview.querySelector("img").src : null;
 
-const machine =
-document.getElementById("machineNumber").value;
+  if(!machine || !time) {
+    alert("Please fill in machine number and time");
+    return;
+  }
 
-const time =
-document.getElementById("laundryTime").value;
+  const reminders = JSON.parse(localStorage.getItem("laundry")) || [];
 
-const imageData =
-laundryImagePreview.querySelector("img") ? 
-laundryImagePreview.querySelector("img").src : null;
+  reminders.push({
+    machine,
+    time,
+    image: imageData,
+    dateAdded: new Date().toLocaleDateString()
+  });
 
-if(!machine || !time) {
-  alert("Please fill in machine number and time");
-  return;
-}
+  localStorage.setItem("laundry", JSON.stringify(reminders));
 
-const reminders =
-JSON.parse(localStorage.getItem("laundry"))
-|| [];
+  // Clear form
+  document.getElementById("machineNumber").value = "";
+  document.getElementById("laundryTime").value = "";
+  document.getElementById("laundryImage").value = "";
+  laundryImagePreview.innerHTML = "";
+  laundryImagePreview.style.display = "none";
 
-reminders.push({
-  machine,
-  time,
-  image: imageData,
-  dateAdded: new Date().toLocaleDateString()
-});
-
-localStorage.setItem(
-"laundry",
-JSON.stringify(reminders)
-);
-
-// Clear form
-document.getElementById("machineNumber").value = "";
-document.getElementById("laundryTime").value = "";
-document.getElementById("laundryImage").value = "";
-laundryImagePreview.innerHTML = "";
-laundryImagePreview.style.display = "none";
-
-loadLaundry();
-
+  loadLaundry();
 }
 
 function loadLaundry(){
+  const list = document.getElementById("laundryList");
+  list.innerHTML = "";
 
-const list =
-document.getElementById("laundryList");
+  const reminders = JSON.parse(localStorage.getItem("laundry")) || [];
 
-list.innerHTML = "";
+  if(reminders.length === 0) {
+    list.innerHTML = "<li style='text-align: center; padding: 40px; color: #999;'><p>No laundry reminders yet. ✨</p></li>";
+    return;
+  }
 
-const reminders =
-JSON.parse(localStorage.getItem("laundry"))
-|| [];
+  reminders.forEach((r, index) => {
+    const li = document.createElement("li");
+    li.className = "laundry-item";
 
-if(reminders.length === 0) {
-  list.innerHTML = "<p>No laundry reminders yet.</p>";
-  return;
-}
+    const imageHtml = r.image ? 
+                      `<img src="${r.image}" alt="Laundry" class="laundry-image">` : 
+                      "<div class='no-image' style='width: 120px; height: 120px; border-radius: 10px;'>📸</div>";
 
-reminders.forEach((r, index) => {
+    li.innerHTML = `
+      <div class="laundry-image-container">
+        ${imageHtml}
+      </div>
+      <div class="laundry-details">
+        <p><strong>🧺 Machine ${r.machine}</strong> • ⏱️ ${r.time}</p>
+        <p style="font-size: 12px;">📅 Added: ${r.dateAdded}</p>
+        <button onclick="deleteLaundry(${index})" class="delete-btn">🗑️ Delete</button>
+      </div>
+    `;
 
-const li =
-document.createElement("li");
-
-li.className = "laundry-item";
-
-const imageHtml = r.image ? 
-`<img src="${r.image}" alt="Laundry" class="laundry-image">` : 
-"<div class='no-image'>No Image</div>";
-
-li.innerHTML = `
-  <div class="laundry-content">
-    ${imageHtml}
-    <div class="laundry-details">
-      <p><strong>Machine ${r.machine}</strong> - ${r.time}</p>
-      <p class="date-added">Added: ${r.dateAdded}</p>
-      <button onclick="deleteLaundry(${index})" class="delete-btn">Delete</button>
-    </div>
-  </div>
-`;
-
-list.appendChild(li);
-
-});
-
+    list.appendChild(li);
+  });
 }
 
 function deleteLaundry(index) {
@@ -293,91 +265,69 @@ function deleteLaundry(index) {
 }
 
 function addLostItem(){
+  const item = document.getElementById("lostItem").value;
+  const location = document.getElementById("lostLocation").value;
+  const imageData = lostImagePreview.querySelector("img") ? 
+                     lostImagePreview.querySelector("img").src : null;
 
-const item =
-document.getElementById("lostItem").value;
+  if(!item || !location) {
+    alert("Please fill in item name and location");
+    return;
+  }
 
-const location =
-document.getElementById("lostLocation").value;
+  const lost = JSON.parse(localStorage.getItem("lost")) || [];
 
-const imageData =
-lostImagePreview.querySelector("img") ? 
-lostImagePreview.querySelector("img").src : null;
+  lost.push({
+    item,
+    location,
+    image: imageData,
+    dateAdded: new Date().toLocaleDateString()
+  });
 
-if(!item || !location) {
-  alert("Please fill in item name and location");
-  return;
-}
+  localStorage.setItem("lost", JSON.stringify(lost));
 
-const lost =
-JSON.parse(localStorage.getItem("lost"))
-|| [];
+  // Clear form
+  document.getElementById("lostItem").value = "";
+  document.getElementById("lostLocation").value = "";
+  document.getElementById("lostImage").value = "";
+  lostImagePreview.innerHTML = "";
+  lostImagePreview.style.display = "none";
 
-lost.push({
-  item,
-  location,
-  image: imageData,
-  dateAdded: new Date().toLocaleDateString()
-});
-
-localStorage.setItem(
-"lost",
-JSON.stringify(lost)
-);
-
-// Clear form
-document.getElementById("lostItem").value = "";
-document.getElementById("lostLocation").value = "";
-document.getElementById("lostImage").value = "";
-lostImagePreview.innerHTML = "";
-lostImagePreview.style.display = "none";
-
-loadLost();
-
+  loadLost();
 }
 
 function loadLost(){
+  const list = document.getElementById("lostList");
+  list.innerHTML = "";
 
-const list =
-document.getElementById("lostList");
+  const lost = JSON.parse(localStorage.getItem("lost")) || [];
 
-list.innerHTML = "";
+  if(lost.length === 0) {
+    list.innerHTML = "<li style='text-align: center; padding: 40px; color: #999;'><p>No lost items reported yet. 🔍</p></li>";
+    return;
+  }
 
-const lost =
-JSON.parse(localStorage.getItem("lost"))
-|| [];
+  lost.forEach((i, index) => {
+    const li = document.createElement("li");
+    li.className = "lost-item";
 
-if(lost.length === 0) {
-  list.innerHTML = "<p>No lost items reported yet.</p>";
-  return;
-}
+    const imageHtml = i.image ? 
+                      `<img src="${i.image}" alt="Lost item" class="lost-image">` : 
+                      "<div class='no-image' style='width: 120px; height: 120px; border-radius: 10px;'>📸</div>";
 
-lost.forEach((i, index) => {
+    li.innerHTML = `
+      <div class="lost-image-container">
+        ${imageHtml}
+      </div>
+      <div class="lost-details">
+        <p><strong>🔍 ${i.item}</strong> • 📍 ${i.location}</p>
+        <p style="font-size: 12px;">📅 Added: ${i.dateAdded}</p>
+        <button onclick="deleteLostItem(${index})" class="delete-btn">🗑️ Delete</button>
+      </div>
+    `;
 
-const li =
-document.createElement("li");
-
-li.className = "lost-item";
-
-const imageHtml = i.image ? 
-`<img src="${i.image}" alt="Lost item" class="lost-image">` : 
-"<div class='no-image'>No Image</div>";
-
-li.innerHTML = `
-  <div class="lost-content">
-    ${imageHtml}
-    <div class="lost-details">
-      <p><strong>${i.item}</strong> found at ${i.location}</p>
-      <p class="date-added">Added: ${i.dateAdded}</p>
-      <button onclick="deleteLostItem(${index})" class="delete-btn">Delete</button>
-    </div>
-  </div>
-`;
-
-list.appendChild(li);
-
-});
-
+    list.appendChild(li);
+  });
 }
 
 function deleteLostItem(index) {
@@ -387,6 +337,8 @@ function deleteLostItem(index) {
   loadLost();
 }
 
+// Initialize
 loadItems();
 loadLaundry();
 loadLost();
+showSlide();

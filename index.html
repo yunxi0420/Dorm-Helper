@@ -95,15 +95,23 @@
 
 <h2>Laundry Reminder</h2>
 
-<input id="machineNumber"
-placeholder="Machine Number">
+<div class="laundry-form">
+    <input id="machineNumber"
+    placeholder="Machine Number">
 
-<input id="laundryTime"
-placeholder="Time Remaining">
+    <input id="laundryTime"
+    placeholder="Time Remaining">
 
-<button onclick="addLaundry()">
-Save Reminder
-</button>
+    <div class="image-upload">
+        <label for="laundryImage">Upload Picture:</label>
+        <input type="file" id="laundryImage" accept="image/*">
+        <div id="laundryImagePreview" class="image-preview"></div>
+    </div>
+
+    <button onclick="addLaundry()">
+    Save Reminder
+    </button>
+</div>
 
 <ul id="laundryList"></ul>
 
@@ -113,15 +121,23 @@ Save Reminder
 
 <h2>Lost & Found</h2>
 
-<input id="lostItem"
-placeholder="Item Name">
+<div class="lostfound-form">
+    <input id="lostItem"
+    placeholder="Item Name">
 
-<input id="lostLocation"
-placeholder="Location Found">
+    <input id="lostLocation"
+    placeholder="Location Found">
 
-<button onclick="addLostItem()">
-Add Post
-</button>
+    <div class="image-upload">
+        <label for="lostImage">Upload Picture:</label>
+        <input type="file" id="lostImage" accept="image/*">
+        <div id="lostImagePreview" class="image-preview"></div>
+    </div>
+
+    <button onclick="addLostItem()">
+    Add Post
+    </button>
+</div>
 
 <ul id="lostList"></ul>
 

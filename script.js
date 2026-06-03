@@ -29,6 +29,22 @@ themeSelector.value
 
 });
 
+// Image upload preview
+const itemImageInput = document.getElementById("itemImage");
+const imagePreview = document.getElementById("imagePreview");
+
+itemImageInput.addEventListener("change", (e) => {
+  const file = e.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      imagePreview.innerHTML = `<img src="${event.target.result}" alt="Preview">`;
+      imagePreview.style.display = "block";
+    };
+    reader.readAsDataURL(file);
+  }
+});
+
 function generateDescription(){
 
 const desc =
@@ -47,21 +63,47 @@ document.getElementById("itemName").value;
 const price =
 document.getElementById("itemPrice").value;
 
-if(!name) return;
+const condition =
+document.getElementById("itemCondition").value;
+
+const description =
+document.getElementById("itemDesc").value;
+
+const imageData =
+imagePreview.querySelector("img") ? 
+imagePreview.querySelector("img").src : null;
+
+if(!name || !price) {
+  alert("Please fill in item name and price");
+  return;
+}
 
 const items =
 JSON.parse(localStorage.getItem("items"))
 || [];
 
 items.push({
-name,
-price
+  name,
+  price,
+  condition,
+  description,
+  image: imageData,
+  dateAdded: new Date().toLocaleDateString()
 });
 
 localStorage.setItem(
 "items",
 JSON.stringify(items)
 );
+
+// Clear form
+document.getElementById("itemName").value = "";
+document.getElementById("itemPrice").value = "";
+document.getElementById("itemCondition").value = "new";
+document.getElementById("itemDesc").value = "";
+document.getElementById("itemImage").value = "";
+imagePreview.innerHTML = "";
+imagePreview.style.display = "none";
 
 loadItems();
 
@@ -78,18 +120,49 @@ const items =
 JSON.parse(localStorage.getItem("items"))
 || [];
 
-items.forEach(item=>{
+if(items.length === 0) {
+  list.innerHTML = "<p>No items listed yet. Be the first to add!</p>";
+  return;
+}
 
-const li =
-document.createElement("li");
+items.forEach((item, index) => {
 
-li.textContent =
-`${item.name} - RM ${item.price}`;
+const itemDiv =
+document.createElement("div");
 
-list.appendChild(li);
+itemDiv.className = "marketplace-item";
+
+const conditionBadge = `<span class="condition-badge ${item.condition}">${item.condition.toUpperCase()}</span>`;
+
+const imageHtml = item.image ? 
+`<img src="${item.image}" alt="${item.name}" class="item-image">` : 
+"<div class='no-image'>No Image</div>";
+
+itemDiv.innerHTML = `
+  <div class="item-content">
+    ${imageHtml}
+    <div class="item-details">
+      <h3>${item.name}</h3>
+      ${conditionBadge}
+      <p class="price">RM ${item.price}</p>
+      <p class="description">${item.description || "No description"}</p>
+      <p class="date-added">Added: ${item.dateAdded}</p>
+      <button onclick="deleteItem(${index})" class="delete-btn">Delete</button>
+    </div>
+  </div>
+`;
+
+list.appendChild(itemDiv);
 
 });
 
+}
+
+function deleteItem(index) {
+  const items = JSON.parse(localStorage.getItem("items")) || [];
+  items.splice(index, 1);
+  localStorage.setItem("items", JSON.stringify(items));
+  loadItems();
 }
 
 function addLaundry(){

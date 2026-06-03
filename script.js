@@ -29,7 +29,7 @@ themeSelector.value
 
 });
 
-// Image upload preview
+// Image upload preview for Marketplace
 const itemImageInput = document.getElementById("itemImage");
 const imagePreview = document.getElementById("imagePreview");
 
@@ -40,6 +40,38 @@ itemImageInput.addEventListener("change", (e) => {
     reader.onload = (event) => {
       imagePreview.innerHTML = `<img src="${event.target.result}" alt="Preview">`;
       imagePreview.style.display = "block";
+    };
+    reader.readAsDataURL(file);
+  }
+});
+
+// Image upload preview for Laundry
+const laundryImageInput = document.getElementById("laundryImage");
+const laundryImagePreview = document.getElementById("laundryImagePreview");
+
+laundryImageInput.addEventListener("change", (e) => {
+  const file = e.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      laundryImagePreview.innerHTML = `<img src="${event.target.result}" alt="Preview">`;
+      laundryImagePreview.style.display = "block";
+    };
+    reader.readAsDataURL(file);
+  }
+});
+
+// Image upload preview for Lost & Found
+const lostImageInput = document.getElementById("lostImage");
+const lostImagePreview = document.getElementById("lostImagePreview");
+
+lostImageInput.addEventListener("change", (e) => {
+  const file = e.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      lostImagePreview.innerHTML = `<img src="${event.target.result}" alt="Preview">`;
+      lostImagePreview.style.display = "block";
     };
     reader.readAsDataURL(file);
   }
@@ -173,19 +205,37 @@ document.getElementById("machineNumber").value;
 const time =
 document.getElementById("laundryTime").value;
 
+const imageData =
+laundryImagePreview.querySelector("img") ? 
+laundryImagePreview.querySelector("img").src : null;
+
+if(!machine || !time) {
+  alert("Please fill in machine number and time");
+  return;
+}
+
 const reminders =
 JSON.parse(localStorage.getItem("laundry"))
 || [];
 
 reminders.push({
-machine,
-time
+  machine,
+  time,
+  image: imageData,
+  dateAdded: new Date().toLocaleDateString()
 });
 
 localStorage.setItem(
 "laundry",
 JSON.stringify(reminders)
 );
+
+// Clear form
+document.getElementById("machineNumber").value = "";
+document.getElementById("laundryTime").value = "";
+document.getElementById("laundryImage").value = "";
+laundryImagePreview.innerHTML = "";
+laundryImagePreview.style.display = "none";
 
 loadLaundry();
 
@@ -202,18 +252,44 @@ const reminders =
 JSON.parse(localStorage.getItem("laundry"))
 || [];
 
-reminders.forEach(r=>{
+if(reminders.length === 0) {
+  list.innerHTML = "<p>No laundry reminders yet.</p>";
+  return;
+}
+
+reminders.forEach((r, index) => {
 
 const li =
 document.createElement("li");
 
-li.textContent =
-`Machine ${r.machine} - ${r.time}`;
+li.className = "laundry-item";
+
+const imageHtml = r.image ? 
+`<img src="${r.image}" alt="Laundry" class="laundry-image">` : 
+"<div class='no-image'>No Image</div>";
+
+li.innerHTML = `
+  <div class="laundry-content">
+    ${imageHtml}
+    <div class="laundry-details">
+      <p><strong>Machine ${r.machine}</strong> - ${r.time}</p>
+      <p class="date-added">Added: ${r.dateAdded}</p>
+      <button onclick="deleteLaundry(${index})" class="delete-btn">Delete</button>
+    </div>
+  </div>
+`;
 
 list.appendChild(li);
 
 });
 
+}
+
+function deleteLaundry(index) {
+  const reminders = JSON.parse(localStorage.getItem("laundry")) || [];
+  reminders.splice(index, 1);
+  localStorage.setItem("laundry", JSON.stringify(reminders));
+  loadLaundry();
 }
 
 function addLostItem(){
@@ -224,19 +300,37 @@ document.getElementById("lostItem").value;
 const location =
 document.getElementById("lostLocation").value;
 
+const imageData =
+lostImagePreview.querySelector("img") ? 
+lostImagePreview.querySelector("img").src : null;
+
+if(!item || !location) {
+  alert("Please fill in item name and location");
+  return;
+}
+
 const lost =
 JSON.parse(localStorage.getItem("lost"))
 || [];
 
 lost.push({
-item,
-location
+  item,
+  location,
+  image: imageData,
+  dateAdded: new Date().toLocaleDateString()
 });
 
 localStorage.setItem(
 "lost",
 JSON.stringify(lost)
 );
+
+// Clear form
+document.getElementById("lostItem").value = "";
+document.getElementById("lostLocation").value = "";
+document.getElementById("lostImage").value = "";
+lostImagePreview.innerHTML = "";
+lostImagePreview.style.display = "none";
 
 loadLost();
 
@@ -253,18 +347,44 @@ const lost =
 JSON.parse(localStorage.getItem("lost"))
 || [];
 
-lost.forEach(i=>{
+if(lost.length === 0) {
+  list.innerHTML = "<p>No lost items reported yet.</p>";
+  return;
+}
+
+lost.forEach((i, index) => {
 
 const li =
 document.createElement("li");
 
-li.textContent =
-`${i.item} found at ${i.location}`;
+li.className = "lost-item";
+
+const imageHtml = i.image ? 
+`<img src="${i.image}" alt="Lost item" class="lost-image">` : 
+"<div class='no-image'>No Image</div>";
+
+li.innerHTML = `
+  <div class="lost-content">
+    ${imageHtml}
+    <div class="lost-details">
+      <p><strong>${i.item}</strong> found at ${i.location}</p>
+      <p class="date-added">Added: ${i.dateAdded}</p>
+      <button onclick="deleteLostItem(${index})" class="delete-btn">Delete</button>
+    </div>
+  </div>
+`;
 
 list.appendChild(li);
 
 });
 
+}
+
+function deleteLostItem(index) {
+  const lost = JSON.parse(localStorage.getItem("lost")) || [];
+  lost.splice(index, 1);
+  localStorage.setItem("lost", JSON.stringify(lost));
+  loadLost();
 }
 
 loadItems();

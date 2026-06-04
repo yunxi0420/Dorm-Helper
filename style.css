@@ -309,6 +309,118 @@ nav li:hover::after {
   background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
 }
 
+/* Bulletin Board */
+.bulletin-board {
+  margin-top: 60px;
+  animation: slideUp 0.6s ease 0.4s both;
+}
+
+.bulletin-board > h2 {
+  text-align: center;
+  font-size: 32px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 40px;
+}
+
+.bulletin-section {
+  background: white;
+  border-radius: 15px;
+  padding: 30px;
+  margin-bottom: 30px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+  border-left: 5px solid;
+  animation: slideUp 0.6s ease;
+}
+
+.laundry-bulletin {
+  border-left-color: #4facfe;
+}
+
+.lostfound-bulletin {
+  border-left-color: #43e97b;
+}
+
+.bulletin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.bulletin-header h3 {
+  font-size: 22px;
+  color: #333;
+  margin: 0;
+}
+
+.bulletin-link {
+  text-decoration: none;
+  color: #667eea;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.bulletin-link:hover {
+  color: #764ba2;
+  transform: translateX(5px);
+}
+
+.bulletin-content {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.bulletin-item {
+  background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
+  border-radius: 10px;
+  padding: 15px;
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.bulletin-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.bulletin-image {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+.bulletin-item-content p {
+  margin: 6px 0;
+  color: #333;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.bulletin-item-content p strong {
+  color: #667eea;
+  font-weight: 600;
+}
+
+.bulletin-date {
+  font-size: 12px;
+  color: #999;
+  font-style: italic;
+  margin-top: 8px;
+}
+
+.laundry-bulletin-item {
+  border-top: 3px solid #4facfe;
+}
+
+.lostfound-bulletin-item {
+  border-top: 3px solid #43e97b;
+}
+
 /* Forms */
 input, textarea, select {
   width: 100%;
@@ -724,5 +836,13 @@ body.white {
 
   .laundry-image, .lost-image {
     max-width: 100%;
+  }
+
+  .bulletin-content {
+    grid-template-columns: 1fr;
+  }
+
+  .bulletin-board > h2 {
+    font-size: 24px;
   }
 }
